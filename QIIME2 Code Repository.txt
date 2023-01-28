@@ -1,0 +1,174 @@
+## Author Notes
+# These commands are generalized forms taken from the MICB 475 modules
+# {} indicates text to be filled out (i.e. folder paths, target sampling depths, file names, etc.)
+# The file names are fairly conventional and meant to work in a pipline.
+# It is set up this way so that you don't have to worry about renaming the files until the post-filtering steps.
+
+
+
+#Activating QIIME 2
+
+conda activate qiime2-2021.11
+
+#### IMPORTING & DEMULTIPLEXING ####
+
+# Importing single end sequences
+qiime tools import \
+  --type EMPSingleEndSequences \
+  --input-path {PathtoSeqeunceFolder} \
+  --output-path emp-single-end-sequences.qza
+
+# Viewing artifact information
+qiime tools peek emp-single-end-sequences.qza
+
+# Demultiplexing
+qiime demux emp-single \
+  --i-seqs emp-single-end-sequences.qza \
+  --m-barcodes-file {PathtoFolder/metadata.tsv} \
+  --m-barcodes-column barcode-sequence \
+  --o-per-sample-sequences demux.qza \
+  --o-error-correction-details demux-details.qza
+
+# Importing via manifest
+qiime tools import \
+  --type "SampleData[SequencesWithQuality]" \
+  --input-format SingleEndFastqManifestPhred33V2 \
+  --input-path {PathtoFolder/manifest.tsv} \
+  --output-path ./demux.qza
+
+# Creating a visualization of demultiplexed samples
+qiime demux summarize \
+  --i-data demux.qza \
+  --o-visualization demux.qzv
+
+#### DENOISING & CLUSTERING ####
+
+# Determine ASVs with DADA2
+qiime dada2 denoise-single \
+  --i-demultiplexed-seqs demux.qza \
+  --p-trim-left {TrimLength} \
+  --p-trunc-len {TruncationLength} \
+  --o-representative-sequences rep-seqs.qza \
+  --o-table table.qza \
+  --o-denoising-stats stats.qza
+  
+# Visualize DADA2 stats
+qiime metadata tabulate \
+  --m-input-file stats.qza \
+  --o-visualization stats.qzv
+
+# Visualize ASVs stats
+qiime feature-table summarize \
+  --i-table table.qza \
+  --o-visualization table.qzv \
+  --m-sample-metadata-file {PathToFolder/metadata.tsv}
+  
+qiime feature-table tabulate-seqs \
+  --i-data rep-seqs.qza \
+  --o-visualization rep-seqs.qzv
+
+#### TAXONOMIC ANALYSIS ####
+
+# Re-training the classifier
+qiime feature-classifier extract-reads \
+  --i-sequences {CorrectClassifierFromServer}.qza \
+  --p-f-primer {ForwardPrimerSequence} \
+  --p-r-primer {ReversePrimerSequence} \
+  --p-trunc-len {TruncationLengthFromDenoising} \
+  --o-reads ref-seqs.qza
+
+# Taxonomic analysis
+qiime feature-classifier classify-sklearn \
+  --i-classifier {PathToFolder/classifier.qza} \
+  --i-reads rep-seqs.qza \
+  --o-classification taxonomy.qza
+
+qiime metadata tabulate \
+  --m-input-file taxonomy.qza \
+  --o-visualization taxonomy.qzv
+  
+# Taxonomy barplots
+qiime taxa barplot \
+  --i-table table.qza \
+  --i-taxonomy taxonomy.qza \
+  --m-metadata-file {PathToFolder/metadata.tsv} \
+  --o-visualization taxa-bar-plots.qzv
+
+#### FILTERING ####
+
+#Taxonomy-based filtering
+qiime taxa filter-table \
+  --i-table table.qza \
+  --i-taxonomy taxonomy.qza \
+  --p-exclude {ExclusionFactors i.e. mitochondria,chloroplast} \
+  --o-filtered-table table-{ExclusionFactors}.qza
+
+#Frequency-based filtering
+qiime feature-table filter-features \
+--i-table table.qza \
+--p-min-frequency {RareASVs=total #reads x 0.00005} \
+--o-filtered-table table-{frequency-filtered}.qza
+
+#Metadata-based filtering
+qiime feature-table filter-samples \
+  --i-table table-{PreviousFilters}.qza \
+  --m-metadata-file {PathtoFolder/metadata.tsv} \
+  --p-where {"[ColumnName] Screen(=, IN, etc) ('value', 'value(s)')" \
+  --o-filtered-table table-{metadata-filtered}.qza
+
+#### RAREFACTION & DIVERSITY ####
+
+# Generate a tree for phylogenetic diversity analyses
+qiime phylogeny align-to-tree-mafft-fasttree \
+  --i-sequences rep-seqs.qza \
+  --o-alignment aligned-rep-seqs.qza \
+  --o-masked-alignment masked-aligned-rep-seqs.qza \
+  --o-tree unrooted-tree.qza \
+  --o-rooted-tree rooted-tree.qza
+
+# Alpha-rarefaction  
+qiime diversity alpha-rarefaction \
+    --i-table table-{Filtered}.qza \
+    --i-phylogeny rooted-tree.qza \
+    --p-max-depth {TargetMaxSequencingDepth} \
+    --m-metadata-file {PathToFolder/metadata.tsv} \
+    --o-visualization alpha-rarefaction.qzv
+
+# Calculate alpha- and beta-diversity metrics
+qiime diversity core-metrics-phylogenetic \
+  --i-phylogeny rooted-tree.qza \
+  --i-table table-no-mitochondria-no-chloroplast.qza \
+  --p-sampling-depth {ChosenSamplingDepth} \
+  --m-metadata-file {PathToFolder/metadata.tsv} \
+  --output-dir core-metrics-results
+
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity core-metrics-results/faith_pd_vector.qza \
+  --m-metadata-file {PathToFolder/metadata.tsv} \
+  --o-visualization core-metrics-results/faith-pd-group-significance.qzv
+
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity core-metrics-results/evenness_vector.qza \
+  --m-metadata-file {PathToFolder/metadata.tsv} \
+  --o-visualization core-metrics-results/evenness-group-significance.qzv
+  
+# Calculate beta-group-significance
+qiime diversity beta-group-significance \
+  --i-distance-matrix core-metrics-results/unweighted_unifrac_distance_matrix.qza \
+  --m-metadata-file {PathToFolder/metadata.tsv} \
+  --m-metadata-column {ColumnName} \
+  --o-visualization core-metrics-results/unweighted-unifrac-{ColumnName}-significance.qzv \
+  --p-pairwise
+  
+# Principal Coordinates Analysis (PCoA)
+qiime emperor plot \
+  --i-pcoa core-metrics-results/unweighted_unifrac_pcoa_results.qza \
+  --m-metadata-file {PathToFolder/metadata.tsv} \
+  --p-custom-axes {ColumnNameofCustomAxis} \
+  --o-visualization core-metrics-results/unweighted-unifrac-emperor-{ColumnNameofCustomAxis}.qzv
+
+qiime emperor plot \
+  --i-pcoa core-metrics-results/bray_curtis_pcoa_results.qza \
+  --m-metadata-file {PathToFolder/metadata.tsv} \
+  --p-custom-axes {ColumnNameofCustomAxis} \
+  --o-visualization core-metrics-results/bray-curtis-emperor-{ColumnNameofCustomAxis}.qzv
