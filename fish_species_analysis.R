@@ -1,4 +1,4 @@
-#Spiny-Ray fish (Class:	Actinopterygii)
+#Ray-finned fish (Class:	Actinopterygii)
 kelp bass
 sargo
 longjaw mudsucker
