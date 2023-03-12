@@ -69,13 +69,19 @@ qiime feature-table tabulate-seqs \
 
 #### TAXONOMIC ANALYSIS ####
 
-# Re-training the classifier
+# Extracting reads
 qiime feature-classifier extract-reads \
-  --i-sequences {CorrectClassifierFromServer}.qza \
+  --i-sequences {silva-ref-seqs}.qza \
   --p-f-primer {ForwardPrimerSequence} \
   --p-r-primer {ReversePrimerSequence} \
   --p-trunc-len {TruncationLengthFromDenoising} \
   --o-reads ref-seqs.qza
+  
+# Training the classifier
+qiime feature-classifier fit-classifier-naive-bayes \
+  --i-reference-reads ref-seqs.qza \
+  --i-reference-taxonomy {ref-taxonomy.qza} \
+  --o-classifier classifier.qza
 
 # Taxonomic analysis
 qiime feature-classifier classify-sklearn \
