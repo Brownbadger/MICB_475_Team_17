@@ -1,0 +1,12 @@
+""	"ASVs"	"Domain"	"Phylum"	"Class"	"Order"	"Family"	"Genus"	"Species"
+"1"	"8d47779fd9e99e67a86116cfadd06ab8"	"d__Bacteria"	"p__Fusobacteriota"	"c__Fusobacteriia"	"o__Fusobacteriales"	"f__Fusobacteriaceae"	"g__Cetobacterium"	"s__uncultured_bacterium"
+"2"	"fafcac30fc1f103b16d297229a3c177d"	"d__Bacteria"	"p__Bacteroidota"	"c__Bacteroidia"	"o__Flavobacteriales"	"f__Flavobacteriaceae"	"g__Tenacibaculum"	NA
+"3"	"c43a014dd2b5071b4ca0c635b107b497"	"d__Bacteria"	"p__Proteobacteria"	"c__Alphaproteobacteria"	"o__Rhodobacterales"	"f__Rhodobacteraceae"	"g__Amylibacter"	NA
+"4"	"5b8a524998ab7e62af940e6bd35578a0"	"d__Bacteria"	"p__Proteobacteria"	"c__Alphaproteobacteria"	"o__Rhodobacterales"	"f__Rhodobacteraceae"	"g__Yoonia-Loktanella"	NA
+"5"	"59ca3781b09ccf264eb0c2b35e9f7aa3"	"d__Bacteria"	"p__Proteobacteria"	"c__Alphaproteobacteria"	"o__Rhodobacterales"	"f__Rhodobacteraceae"	"g__Roseobacter_clade_NAC11-7_lineage"	"s__uncultured_bacterium"
+"6"	"56c0e592c1af3653321f3cc54dd2b9f5"	"d__Bacteria"	"p__Verrucomicrobiota"	"c__Verrucomicrobiae"	"o__Verrucomicrobiales"	"f__Rubritaleaceae"	"g__Roseibacillus"	"s__uncultured_marine"
+"7"	"081f2cda0b8c1fbe71c9f7d8e8cb285a"	"d__Bacteria"	"p__Proteobacteria"	"c__Alphaproteobacteria"	"o__Caulobacterales"	"f__Hyphomonadaceae"	"g__Hellea"	NA
+"8"	"66e60ff4502dd8cb09c83e16ce95615d"	"d__Bacteria"	"p__Proteobacteria"	"c__Gammaproteobacteria"	"o__Cellvibrionales"	"f__Halieaceae"	"g__Halioglobus"	NA
+"9"	"1e78ad2be2d49f415587d08aa8dd2536"	"d__Bacteria"	"p__Proteobacteria"	"c__Gammaproteobacteria"	"o__Alteromonadales"	"f__Shewanellaceae"	"g__Shewanella"	NA
+"10"	"683431f43c325542db20826f65a11c63"	"d__Bacteria"	"p__Proteobacteria"	"c__Gammaproteobacteria"	"o__Alteromonadales"	"f__Pseudoalteromonadaceae"	"g__Pseudoalteromonas"	NA
+"11"	"d231f0e0c498fd70bb871f040e88fde9"	"d__Bacteria"	"p__Proteobacteria"	"c__Gammaproteobacteria"	"o__Arenicellales"	"f__Arenicellaceae"	"g__Arenicella"	"s__uncultured_bacterium"

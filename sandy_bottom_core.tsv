@@ -1,0 +1,12 @@
+""	"ASVs"	"Domain"	"Phylum"	"Class"	"Order"	"Family"	"Genus"	"Species"
+"1"	"444e9096f9aea1e3a7dc67c8ffb282ca"	"d__Bacteria"	"p__Cyanobacteria"	"c__Cyanobacteriia"	"o__Synechococcales"	"f__Cyanobiaceae"	"g__Synechococcus_CC9902"	NA
+"2"	"e733371157e0528165c7496d4214de74"	"d__Bacteria"	"p__Bacteroidota"	"c__Bacteroidia"	"o__Flavobacteriales"	"f__Flavobacteriaceae"	NA	NA
+"3"	"145228cfb64a86849e2478d5f56c3e93"	"d__Bacteria"	"p__Bacteroidota"	"c__Bacteroidia"	"o__Chitinophagales"	"f__Saprospiraceae"	"g__uncultured"	"s__uncultured_marine"
+"4"	"2659712747fffb424304adefea44c259"	"d__Bacteria"	"p__Planctomycetota"	"c__Planctomycetes"	"o__Pirellulales"	"f__Pirellulaceae"	"g__Blastopirellula"	NA
+"5"	"932135b0e9cadf564245b40e72aa4bad"	"d__Bacteria"	"p__Proteobacteria"	"c__Alphaproteobacteria"	"o__Rhodobacterales"	"f__Rhodobacteraceae"	"g__Tateyamaria"	NA
+"6"	"c18aa548dff82827f48bd51d7a4f929a"	"d__Bacteria"	"p__Verrucomicrobiota"	"c__Verrucomicrobiae"	"o__Verrucomicrobiales"	"f__Rubritaleaceae"	"g__Roseibacillus"	"s__uncultured_marine"
+"7"	"a7d7c2aa76eee98628761b64009effbc"	"d__Bacteria"	"p__Myxococcota"	"c__Polyangia"	"o__Polyangiales"	"f__Sandaracinaceae"	"g__uncultured"	NA
+"8"	"2a0f9ba6729b8c4d9caa138532e49b91"	"d__Bacteria"	"p__Proteobacteria"	"c__Gammaproteobacteria"	"o__Cellvibrionales"	"f__Halieaceae"	"g__OM60(NOR5)_clade"	"s__uncultured_marine"
+"9"	"683431f43c325542db20826f65a11c63"	"d__Bacteria"	"p__Proteobacteria"	"c__Gammaproteobacteria"	"o__Alteromonadales"	"f__Pseudoalteromonadaceae"	"g__Pseudoalteromonas"	NA
+"10"	"40c2575593e3d0860cea0c29d5a82e59"	"d__Bacteria"	"p__Proteobacteria"	"c__Gammaproteobacteria"	"o__Alteromonadales"	"f__Psychromonadaceae"	"g__Psychromonas"	NA
+"11"	"9e10d16e117c7408ff32af0e2309f5c6"	"d__Bacteria"	"p__Proteobacteria"	"c__Gammaproteobacteria"	"o__Gammaproteobacteria_Incertae_Sedis"	"f__Unknown_Family"	"g__uncultured"	"s__uncultured_proteobacterium"
