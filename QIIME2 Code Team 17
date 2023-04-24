@@ -1,7 +1,4 @@
-# Shared server log in
-# ssh root@10.19.139.174
-# Biome944
-# Save all data into data folder
+####AFEGCS523-001: Importing Data into QIIME2 and Preliminary Exploration####
 
 # Import via manifest
   qiime tools import \
@@ -32,15 +29,7 @@ qiime demux summarize \
   qiime feature-table tabulate-seqs \
   --i-data rep-seqs.qza \
   --o-visualization rep-seqs.qzv
-
-  screen -S denoise
-
-   rep-seqs_spinyT3.qza
-
-   # Generate a tree for phylogenetic diversity analyses
-qiime phylogeny align-to-tree-mafft-fasttree \
-  --i-sequences rep-seqs_spinyT3.qza \
-  --o-alignment aligned-rep-seqs-SpinyT3.qza \
-  --o-masked-alignment masked-aligned-rep-seqs-SpinyT3.qza \
-  --o-tree unrooted-tree-SpinyT3.qza \
-  --o-rooted-tree rooted-tree-SpinyT3.qza
+  
+  ####AFEGCS523-XXX: Filtering and Denoising####
+  
+  
