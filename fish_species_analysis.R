@@ -104,7 +104,3 @@ mummichog
 bluefish
 striped blenny
 atlantic menhaden
-
-fam <- data.frame(names = c("Melissa","David", "Maxine", "Braelyn")
-                  , age = c(103, 103, 1,7)
-                  , human = c(TRUE, TRUE, FALSE, FALSE))
