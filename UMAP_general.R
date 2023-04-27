@@ -30,7 +30,7 @@ otu_fish$colsum <- rowSums(otu_fish)
 
 otu_fishy <- otu_fish %>% 
   filter(colsum != 0) %>% 
-  select(-colsum) %>% 
+  select(-colsum) %>%
   t() %>% 
   as.data.frame()
 

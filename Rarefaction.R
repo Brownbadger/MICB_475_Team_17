@@ -1,5 +1,7 @@
-# Rarefaction - Brandon Connor - 13th March 2023
+# Rarefaction - Brandon Connor - 13th March 2023 - Andreas Felber 24th April 2023
 
+
+# Load libraries
 library(phyloseq)
 library(ape)
 library(tidyverse)
@@ -31,7 +33,7 @@ class(OTU)
 # Save everything except sampleid as new data frame
 samp_df <- as.data.frame(meta[,-1])
 # Make sampleids the rownames
-rownames(samp_df)<- meta$`#SampleID`
+rownames(samp_df)<- meta$`X.SampleID`
 # Make phyloseq sample data with sample_data() function
 SAMP <- sample_data(samp_df)
 class(SAMP)
@@ -57,20 +59,14 @@ phyloseq_fish <- phyloseq(OTU, SAMP, TAX, phylotree)
 phy_tree(phyloseq_fish)
 
 # Rarefaction curve
-
 library(vegan)
 
-
-rarecurve(t(as.data.frame(otu_table(phyloseq_fish))), cex = 0.1)
-?rarecurve
+rarecurve(t(as.data.frame(otu_table(phyloseq_fish))), cex = 0.1, label = FALSE, xlab = "Sample Depth", ylab = "Species Count")
+abline(v = 4395)
 
 fish_rare <- rarefy_even_depth(phyloseq_fish, rngseed = 1, sample.size = 4395)
 
 save(phyloseq_fish, file="phyloseq_fish.RData")
 save(fish_rare, file="rare_fish.RData")
 
-
-
-
-
-write.table(meta, file='SpinyT3_final_metadata.tsv', quote=FALSE, sep='\t', col.names = NA)
+#write.table(meta, file='SpinyT3_final_metadata.tsv', quote=FALSE, sep='\t', col.names = NA)
