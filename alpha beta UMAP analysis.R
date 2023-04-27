@@ -7,8 +7,8 @@ library(phyloseq)
 
 
 #### Load in RData ####
-load("/Users/shutong/Desktop/fish475_project/rare_fish.RData")
-load("/Users/shutong/Desktop/fish475_project/phyloseq_fish.RData")
+load("rare_fish.RData")
+load("phyloseq_fish.RData")
 
 #### Alpha diversity - sampling site ######
 plot_richness(fish_rare) 
