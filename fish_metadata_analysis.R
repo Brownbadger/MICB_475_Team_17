@@ -1,6 +1,6 @@
-###Not used###
+###Used in exploratory analysis of metatdata variables###
 
-#END ME
+#Load library
 library(tidyverse)
 
 #The fish dataset blub blub

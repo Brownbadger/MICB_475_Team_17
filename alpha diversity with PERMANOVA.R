@@ -1,14 +1,13 @@
-###Alpha, beta, UMAP analyses of sampling locations and substrata - Ellie Gang 03.14.23
+###Alpha diversity PERMANOVA analyses of sampling locations and substrata - Ellie Gang
 library(phyloseq)
 library(ape)
 library(tidyverse)
 library(vegan)
 library(phyloseq)
-install.packages("EcolUtils")
 
 #### Load in RData ####
-load("/Users/shutong/Desktop/fish475_project/rare_fish.RData")
-load("/Users/shutong/Desktop/fish475_project/phyloseq_fish.RData")
+load("rare_fish.RData")
+load("phyloseq_fish.RData")
 
 #### Alpha diversity - sampling site ######
 plot_richness(fish_rare) 
@@ -20,7 +19,7 @@ gg_richness_sampling <- plot_richness(fish_rare, x = "SAMPLE_TYPE", measures = c
   geom_boxplot() 
 gg_richness_sampling +theme_classic()
 
-ggsave(filename = "/Users/shutong/Desktop/gg_richness_sampling.png"
+ggsave(filename = "gg_richness_sampling.png"
        , gg_richness_sampling
        , height=4, width=6)
 
