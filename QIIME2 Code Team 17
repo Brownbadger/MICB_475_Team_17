@@ -1,4 +1,4 @@
-####AFEGCS523-001: Importing Data into QIIME2 and Preliminary Exploration####
+####AFEGCS523-003: Importing Data into QIIME2 and Preliminary Exploration####
 
 # Import via manifest
   qiime tools import \
@@ -12,7 +12,7 @@ qiime demux summarize \
   --i-data demux.qza \
   --o-visualization demux_unfiltered_data.qzv
   
-####AFEGCS523-XXX: Subsetting and Denoising####
+####AFEGCS523-004: Subsetting and Denoising####
 
 # Denoise
  qiime dada2 denoise-single \
@@ -32,7 +32,7 @@ qiime demux summarize \
   --i-data rep-seqs.qza \
   --o-visualization rep-seqs_denoised.qzv
 
-#### 1.3 Clustering/Taxanomy and Filtering####
+####AFEGCS523-009: Clustering/Taxanomy and Filtering####
 
 # Training the classifier
 qiime feature-classifier extract-reads \
@@ -97,7 +97,7 @@ qiime phylogeny align-to-tree-mafft-fasttree \
   --o-rooted-tree rooted-tree-SpinyT3.qza
 
 
-####AFEGCS523-XXX:(1.8) Analysis of Data from Specific Sampling Locations####
+####AFEGCS523-023: Analysis of Data from Specific Sampling Locations####
   
  # Upload edited metadata to server
 scp ./spinyT3_metadata_fixed.txt root@10.19.139.174:/data/SpinyT3Samples
@@ -187,7 +187,7 @@ qiime diversity beta-group-significance \
   --o-visualization /data/SpinyT3Samples/midgut_samples_only/core-metrics-results-midgut/weighted-unifrac-substrata_collection-significance-midgut.qzv \
   --p-pairwise
   
-####  1.9 Alpha and Beta Analysis on Midgut Samples####
+####AFEGCS523-032: Alpha and Beta Analysis on Midgut Samples####
 
 # Converting and exporting table and taxanomy files from QIIME2 for R.
 
