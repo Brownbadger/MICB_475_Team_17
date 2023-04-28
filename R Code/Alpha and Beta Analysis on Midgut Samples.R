@@ -65,6 +65,10 @@ class(TAX)
 
 ## Create phyloseq object
 # Merge all into a phyloseq object
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2884801394fad29ce36fa66b5e04a4280a35c3a9
 fishmidgut <- phyloseq(OTU, SAMP, TAX, phylotree)
 
 ## Looking at phyloseq object

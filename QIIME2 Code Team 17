@@ -10,7 +10,9 @@
 # Creating a visualization of demultiplexed samples
 qiime demux summarize \
   --i-data demux.qza \
-  --o-visualization demux.qzv
+  --o-visualization demux_unfiltered_data.qzv
+  
+####AFEGCS523-XXX: Subsetting and Denoising####
 
 # Denoise
  qiime dada2 denoise-single \
@@ -23,13 +25,186 @@ qiime demux summarize \
 
   qiime feature-table summarize \
   --i-table table.qza \
-  --o-visualization table.qzv \
+  --o-visualization table_denoised.qzv \
   --m-sample-metadata-file /data/SpinySamples/Spiny_fish_metadata.txt
 
   qiime feature-table tabulate-seqs \
   --i-data rep-seqs.qza \
-  --o-visualization rep-seqs.qzv
+  --o-visualization rep-seqs_denoised.qzv
+
+#### 1.3 Clustering/Taxanomy and Filtering####
+
+# Training the classifier
+qiime feature-classifier extract-reads \
+  --i-sequences silva-138-99-seqs.qza \
+  --p-f-primer GTGYCAGCMGCCGCGGTAA \
+  --p-r-primer GGACTACNVGGGTWTCTAAT \
+  --p-trunc-len 235 \
+  --o-reads ref-seqs.qza
   
-  ####AFEGCS523-XXX: Filtering and Denoising####
+  qiime feature-classifier fit-classifier-naive-bayes \
+  --i-reference-reads ref-seqs.qza \
+  --i-reference-taxonomy silva-138-99-tax.qza \
+  --o-classifier classifier_fishT3.qza
+
+####AFEGCS523-XXX:(1.8) Analysis of Data from Specific Sampling Locations####
   
+ #Upload edited metadata to server
+scp ./spinyT3_metadata_fixed.txt root@10.19.139.174:/data/SpinyT3Samples
+
+#Metadata-based filtering
+#In skin_samples_only directory (1)
+qiime feature-table filter-samples \
+--i-table /data/SpinyT3Samples/table_spinyT3-no-mitochondria-no-chloroplast-no-unassigned.qza \
+--m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt\
+--p-where "sample_type='skin'" \
+--o-filtered-table table-no-mitochondria-no-chloroplast-no-unassigned-skin-only.qza
+
+#In midgut_samples_only directory (2)
+qiime feature-table filter-samples \
+--i-table /data/SpinyT3Samples/table_spinyT3-no-mitochondria-no-chloroplast-no-unassigned.qza \
+--m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt\
+--p-where "sample_type='midgut'" \
+--o-filtered-table table-no-mitochondria-no-chloroplast-no-unassigned-midgut-only.qza
   
+##alpha rarefraction##
+
+#Skin only
+qiime diversity alpha-rarefaction \
+--i-table table-no-mitochondria-no-chloroplast-no-unassigned-skin-only.qza \
+--i-phylogeny /data/SpinyT3Samples/rooted-tree-SpinyT3.qza \
+--p-max-depth 4395 \
+--m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt \
+--o-visualization alpha-rarefaction_skin.qzv
+
+#Midgut only
+qiime diversity alpha-rarefaction \
+--i-table table-no-mitochondria-no-chloroplast-no-unassigned-midgut-only.qza \
+--i-phylogeny /data/SpinyT3Samples/rooted-tree-SpinyT3.qza \
+--p-max-depth 4395 \
+--m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt \
+--o-visualization alpha-rarefaction_midgut.qzv
+
+##calculate alpha and beta diversity##
+
+  # Skin samples only
+qiime diversity core-metrics-phylogenetic \
+  --i-phylogeny /data/SpinyT3Samples/rooted-tree-SpinyT3.qza \
+  --i-table /data/SpinyT3Samples/skin_samples_only/table-no-mitochondria-no-chloroplast-no-unassigned-skin-only.qza \
+  --p-sampling-depth 4395 \
+  --m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt \
+  --output-dir /data/SpinyT3Samples/skin_samples_only/core-metrics-results-skin
+
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity /data/SpinyT3Samples/skin_samples_only/core-metrics-results-skin/faith_pd_vector.qza \
+  --m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt \
+  --o-visualization /data/SpinyT3Samples/skin_samples_only/core-metrics-results-skin/faith-pd-group-significance-skin.qzv
+
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity /data/SpinyT3Samples/skin_samples_only/core-metrics-results-skin/shannon_vector.qza \
+  --m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt \
+  --o-visualization /data/SpinyT3Samples/skin_samples_only/core-metrics-results-skin/shannon-group-significance-skin.qzv
+  
+  qiime diversity beta-group-significance \
+  --i-distance-matrix /data/SpinyT3Samples/skin_samples_only/core-metrics-results-skin/weighted_unifrac_distance_matrix.qza \
+  --m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt \
+  --m-metadata-column substrata_collection \
+  --o-visualization /data/SpinyT3Samples/skin_samples_only/core-metrics-results-skin/weighted-unifrac-substrata_collection-significance-skin.qzv \
+  --p-pairwise
+
+  # Midgut samples only 
+qiime diversity core-metrics-phylogenetic \
+  --i-phylogeny /data/SpinyT3Samples/rooted-tree-SpinyT3.qza \
+  --i-table /data/SpinyT3Samples/midgut_samples_only/table-no-mitochondria-no-chloroplast-no-unassigned-midgut-only.qza \
+  --p-sampling-depth 4395 \
+  --m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt \
+  --output-dir /data/SpinyT3Samples/midgut_samples_only/core-metrics-results-midgut
+  
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity /data/SpinyT3Samples/midgut_samples_only/core-metrics-results-midgut/faith_pd_vector.qza \
+  --m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt \
+  --o-visualization /data/SpinyT3Samples/midgut_samples_only/core-metrics-results-midgut/faith-pd-group-significance-midgut.qzv
+
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity /data/SpinyT3Samples/midgut_samples_only/core-metrics-results-midgut/shannon_vector.qza \
+  --m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt \
+  --o-visualization /data/SpinyT3Samples/midgut_samples_only/core-metrics-results-midgut/shannon-group-significance-midgut.qzv
+  
+qiime diversity beta-group-significance \
+  --i-distance-matrix /data/SpinyT3Samples/midgut_samples_only/core-metrics-results-midgut/weighted_unifrac_distance_matrix.qza \
+  --m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt \
+  --m-metadata-column substrata_collection \
+  --o-visualization /data/SpinyT3Samples/midgut_samples_only/core-metrics-results-midgut/weighted-unifrac-substrata_collection-significance-midgut.qzv \
+  --p-pairwise
+  
+####  1.9 Alpha and Beta Analysis on Midgut Samples####
+
+# Converting and exporting table and taxanomy files from QIIME2 for R.
+
+qiime tools extract \
+--input-path table-no-mitochondria-no-chloroplast-no-unassigned-midgut-only.qza \
+  --output-path /data/SpinyT3Samples/midgut-samples-only/exported-feature-table-midgut
+  
+biom convert -i feature-table.biom -o midgut-feature-table.txt --to-tsv
+
+# Modify taxonomy.tsv
+biom add-metadata -i feature-table.biom -o table-with-taxonomy.biom --observation-metadata-fp /data/SpinyT3Samples/taxonomy_spinyT3.tsv/taxonomy.tsv --sc-separated taxonomy
+
+biom convert -i feature-table.biom -o table.from_biom_w_taxonomy.txt --to-tsv --header-key taxonomy
+
+#Files downloaded to local server:
+/data/SpinyT3Samples/SpinyT3_fish_metadata.txt
+/data/SpinyT3Samples/midgut-samples-only/exported-feature-table-midgut/b8125c1b-488d-4d73-9411-ae3f1df35c2c/data/midgut-feature-table.txt
+/data/SpinyT3Samples/taxonomy_spinyT3.tsv/taxonomy.tsv
+/data/SpinyT3Samples/rooted-tree-SpinyT3.nwk/tree.nwk
+
+## QIIME2 Statistics
+
+# Subset table to only keep samples from either rocky reef, kelp forrest (spelling error is from original datset), and sandy bottom substrata.
+
+qiime feature-table filter-samples \
+  --i-table table-no-mitochondria-no-chloroplast-no-unassigned-midgut-only.qza \
+  --m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt\
+  --p-where "[substrata_collection] IN ('sandy bottom', 'kelp forrest', 'rocky reef')" \
+  --o-filtered-table table-no-mitochondria-no-chloroplast-no-unassigned-midgut-only-3subs.qza
+  
+# calculate alpha and beta metrics
+
+ qiime diversity core-metrics-phylogenetic \
+  --i-phylogeny /data/SpinyT3Samples/rooted-tree-SpinyT3.qza \
+  --i-table /data/SpinyT3Samples/midgut_samples_only/table-no-mitochondria-no-chloroplast-no-unassigned-midgut-only-3subs.qza \
+  --p-sampling-depth 4395 \
+  --m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt \
+  --output-dir /data/SpinyT3Samples/midgut_samples_only/core-metrics-results-midgut-3subs
+  
+# faith pd
+
+  qiime diversity alpha-group-significance \
+  --i-alpha-diversity /data/SpinyT3Samples/midgut_samples_only/core-metrics-results-midgut-3subs/faith_pd_vector.qza \
+  --m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt \
+  --o-visualization /data/SpinyT3Samples/midgut_samples_only/core-metrics-results-midgut-3subs/faith-pd-group-significance-midgut.qzv
+  
+# shannon
+
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity /data/SpinyT3Samples/midgut_samples_only/core-metrics-results-midgut-3subs/shannon_vector.qza \
+  --m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt \
+  --o-visualization /data/SpinyT3Samples/midgut_samples_only/core-metrics-results-midgut-3subs/shannon-group-significance-midgut.qzv
+
+# unweighted unifrac
+
+qiime diversity beta-group-significance \
+  --i-distance-matrix /data/SpinyT3Samples/midgut_samples_only/core-metrics-results-midgut-3subs/unweighted_unifrac_distance_matrix.qza \
+  --m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt \
+  --m-metadata-column substrata_collection \
+  --o-visualization /data/SpinyT3Samples/midgut_samples_only/core-metrics-results-midgut-3subs/unweighted-unifrac-substrata_collection-significance-midgut.qzv \
+  --p-pairwise
+  
+# weighted unifrac
+
+qiime diversity beta-group-significance \
+  --i-distance-matrix /data/SpinyT3Samples/midgut_samples_only/core-metrics-results-midgut-3subs/weighted_unifrac_distance_matrix.qza \
+  --m-metadata-file /data/SpinyT3Samples/spinyT3_metadata_fixed.txt \
+  --m-metadata-column substrata_collection \
+  --o-visualization /data/SpinyT3Samples/midgut_samples_only/core-metrics-results-midgut-3subs/weighted-unifrac-substrata_collection-significance-midgut.qzv \
+  --p-pairwise
