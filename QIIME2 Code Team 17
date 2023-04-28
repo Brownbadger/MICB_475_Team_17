@@ -46,10 +46,60 @@ qiime feature-classifier extract-reads \
   --i-reference-reads ref-seqs.qza \
   --i-reference-taxonomy silva-138-99-tax.qza \
   --o-classifier classifier_fishT3.qza
+  
+ # Taxonomic analysis
+qiime feature-classifier classify-sklearn \
+  --i-classifier classifier_fishT3.qza \
+  --i-reads rep-seqs.qza \
+  --o-classification taxonomy_spinyT3.qza 
+
+qiime metadata tabulate \
+  --m-input-file taxonomy_spinyT3.qza \ 
+  --o-visualization taxonomy_spinyT3.qzv
+  
+# Taxonomy barplots
+qiime taxa barplot \
+  --i-table table.qza \
+  --i-taxonomy taxonomy_spinyT3.qza \
+  --m-metadata-file SpinyT3_fish_metadata.txt \
+  --o-visualization taxa-bar-plots_spinyT3.qzv 
+  
+#Taxonomy-based filtering
+qiime taxa filter-table \
+  --i-table table.qza \
+  --i-taxonomy taxonomy_spinyT3.qza \
+  --p-exclude mitochondria,chloroplast \
+  --o-filtered-table table-no-mitochondria-no-chloroplast.qza
+
+qiime taxa filter-table \
+  --i-table table-no-mitochondria-no-chloroplast.qza \
+  --i-taxonomy taxonomy_spinyT3.qza \
+  --p-include d__ \
+  --o-filtered-table table-no-mitochondria-no-chloroplast-no-unassigned.qza 
+  
+qiime metadata tabulate \
+  --m-input-file table-no-mitochondria-no-chloroplast-no-unassigned.qza \ 
+  --o-visualization table-no-mitochondria-no-chloroplast-no-unassigned.qzv
+  
+# Taxonomy barplots
+qiime taxa barplot \
+  --i-table table-no-mitochondria-no-chloroplast-no-unassigned.qza \
+  --i-taxonomy taxonomy_spinyT3.qza \
+  --m-metadata-file SpinyT3_fish_metadata.txt \
+  --o-visualization taxa-bar-plots_spinyT3-filtered.qzv 
+  
+# Generate a tree for phylogenetic diversity analyses
+qiime phylogeny align-to-tree-mafft-fasttree \
+  --i-sequences rep-seqs_spinyT3.qza \
+  --o-alignment aligned-rep-seqs-SpinyT3.qza \
+  --o-masked-alignment masked-aligned-rep-seqs-SpinyT3.qza \
+  --o-tree unrooted-tree-SpinyT3.qza \
+  --o-rooted-tree rooted-tree-SpinyT3.qza
+
 
 ####AFEGCS523-XXX:(1.8) Analysis of Data from Specific Sampling Locations####
   
- #Upload edited metadata to server
+ # Upload edited metadata to server
 scp ./spinyT3_metadata_fixed.txt root@10.19.139.174:/data/SpinyT3Samples
 
 #Metadata-based filtering
@@ -152,11 +202,11 @@ biom add-metadata -i feature-table.biom -o table-with-taxonomy.biom --observatio
 
 biom convert -i feature-table.biom -o table.from_biom_w_taxonomy.txt --to-tsv --header-key taxonomy
 
-#Files downloaded to local server:
-/data/SpinyT3Samples/SpinyT3_fish_metadata.txt
-/data/SpinyT3Samples/midgut-samples-only/exported-feature-table-midgut/b8125c1b-488d-4d73-9411-ae3f1df35c2c/data/midgut-feature-table.txt
-/data/SpinyT3Samples/taxonomy_spinyT3.tsv/taxonomy.tsv
-/data/SpinyT3Samples/rooted-tree-SpinyT3.nwk/tree.nwk
+# Files downloaded to local server:
+# /data/SpinyT3Samples/SpinyT3_fish_metadata.txt
+# /data/SpinyT3Samples/midgut-samples-only/exported-feature-table-midgut/b8125c1b-488d-4d73-9411-ae3f1df35c2c/data/midgut-feature-table.txt
+# /data/SpinyT3Samples/taxonomy_spinyT3.tsv/taxonomy.tsv
+# /data/SpinyT3Samples/rooted-tree-SpinyT3.nwk/tree.nwk
 
 ## QIIME2 Statistics
 
