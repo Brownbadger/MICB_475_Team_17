@@ -35,13 +35,16 @@ class(OTU)
 ## Filter sample metadata
 meta <- filter(meta, sample_type == "midgut")
 chosen_subs <- c("kelp forrest", "sandy bottom", "rocky reef")
-meta_chosen_subs <- filter(meta, substrata_collection %in% chosen_subs)
+meta_chosen_subs <- meta %>% 
+  filter(substrata_collection %in% chosen_subs) %>% 
+  arrange(substrata_collection)
+meta_chosen_subs[1:8,46] <- "kelp forest"
 
 ## Format sample metadata 
 # Save everything except sampleid as new data frame
 samp_df <- as.data.frame(meta_chosen_subs[,-1])
 # Make sampleids the rownames
-rownames(samp_df)<- meta_chosen_subs$"#SampleID"
+rownames(samp_df)<- meta_chosen_subs$X.SampleID
 # Make phyloseq sample data with sample_data() function
 SAMP <- sample_data(samp_df)
 class(SAMP)
@@ -62,7 +65,7 @@ class(TAX)
 
 ## Create phyloseq object
 # Merge all into a phyloseq object
-# fishmidgut <- phyloseq(OTU, SAMP, TAX, phylotree)
+fishmidgut <- phyloseq(OTU, SAMP, TAX, phylotree)
 
 ## Looking at phyloseq object
 # View components of phyloseq object with the following commands
@@ -75,7 +78,7 @@ save(fishmidgut, file = "fish_midgut.RData")
 
 ## Faith's PD  
 
-load("C:/Users/Claudia/OneDrive - UBC/MICB 475 Bioinformatics/Project/fish/fish_midgut.RData")
+load("fish_midgut.RData")
 
 library(picante)
 
