@@ -62,7 +62,8 @@ class(TAX)
 
 ## Create phyloseq object
 # Merge all into a phyloseq object
-# fishmidgut <- phyloseq(OTU, SAMP, TAX, phylotree)
+
+fishmidgut <- phyloseq(OTU, SAMP, TAX, phylotree)
 
 ## Looking at phyloseq object
 # View components of phyloseq object with the following commands
