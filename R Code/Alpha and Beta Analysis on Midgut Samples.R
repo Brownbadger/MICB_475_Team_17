@@ -157,7 +157,7 @@ ggsave(filename = "chao midgut.png"
        , height=4, width=5)
 
 dm_chao <- vegdist(t(otu_table(fishmidgut)), method="chao")
-chao_stats <- adonis2(dm_chao ~ substrata_collection, data=samp_dat_wdiv)
+chao_stats <- adonis2(dm_chao ~ substrata_collection, data=meta_chosen_subs)
 chao_stats
 
 # rocky reef & kelp forrest chao
