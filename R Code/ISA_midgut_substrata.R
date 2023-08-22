@@ -97,7 +97,7 @@ View(isa_res_gill)
 # Save results
 save(isa_res_gill, file = "isa_res_gill_substrata.RData")
 
-#### Midgut Analysis
+#### Hindgut Analysis
 
 hindgut <- fish_rare %>% 
   subset_samples(sample_type=="hindgut") %>% 
