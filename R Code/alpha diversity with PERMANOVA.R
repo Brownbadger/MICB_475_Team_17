@@ -3,7 +3,6 @@ library(phyloseq)
 library(ape)
 library(tidyverse)
 library(vegan)
-library(phyloseq)
 
 #### Load in RData ####
 load("rare_fish.RData")
