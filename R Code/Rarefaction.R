@@ -10,6 +10,7 @@ library(tidyverse)
 
 metafp <- "SpinyT3_fish_metadata.txt"
 meta <- read_delim(metafp, delim="\t")
+meta[c(21:24, 29:40, 61:68, 81:84, 122:125),46] <- "kelp forest"
 
 otufp <- "feature-table.txt"
 otu <- read_delim(file = otufp, delim="\t", skip=1)
