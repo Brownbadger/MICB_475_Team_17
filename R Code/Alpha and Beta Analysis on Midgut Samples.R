@@ -35,16 +35,13 @@ class(OTU)
 ## Filter sample metadata
 meta <- filter(meta, sample_type == "midgut")
 chosen_subs <- c("kelp forrest", "sandy bottom", "rocky reef")
-meta_chosen_subs <- meta %>% 
-  filter(substrata_collection %in% chosen_subs) %>% 
-  arrange(substrata_collection)
-meta_chosen_subs[1:8,46] <- "kelp forest"
+meta_chosen_subs <- filter(meta, substrata_collection %in% chosen_subs)
 
 ## Format sample metadata 
 # Save everything except sampleid as new data frame
 samp_df <- as.data.frame(meta_chosen_subs[,-1])
 # Make sampleids the rownames
-rownames(samp_df)<- meta_chosen_subs$X.SampleID
+rownames(samp_df)<- meta_chosen_subs$"X.SampleID"
 # Make phyloseq sample data with sample_data() function
 SAMP <- sample_data(samp_df)
 class(SAMP)
@@ -65,11 +62,7 @@ class(TAX)
 
 ## Create phyloseq object
 # Merge all into a phyloseq object
-<<<<<<< HEAD
-=======
-
->>>>>>> 2884801394fad29ce36fa66b5e04a4280a35c3a9
-fishmidgut <- phyloseq(OTU, SAMP, TAX, phylotree)
+# fishmidgut <- phyloseq(OTU, SAMP, TAX, phylotree)
 
 ## Looking at phyloseq object
 # View components of phyloseq object with the following commands
@@ -80,7 +73,7 @@ phy_tree(fishmidgut)
 
 save(fishmidgut, file = "fish_midgut.RData")
 
-## Faith's PD  
+## Faith's PD
 
 load("fish_midgut.RData")
 
@@ -96,65 +89,64 @@ faith_pd <- pd(t(OTU_table), tree, include.root=TRUE)
 
 meta_pd$Phyogenetic_diversity <- faith_pd$PD 
 
-plot_pd <- ggplot(meta_pd, aes(substrata_collection, Phyogenetic_diversity)) + geom_boxplot() + geom_point(size = 2) + theme(axis.text.x = element_text(size=14, angle = 90)) + theme_bw() + xlab("Substrata") + ylab("Phylogenetic Diversity")
+plot_pd <- ggplot(meta_pd, aes(substrata_collection, Phyogenetic_diversity)) + geom_boxplot() + geom_point(size = 2) + theme_classic() + xlab("Substrata") + ylab("Alpha Diversity Measure")
 print(plot_pd)
 
-ggsave(filename = "faith's pd midgut.png" 
+ggsave(filename = "faith's pd midgut.png"
        , plot_pd
-       , height=5, width=4)
+       , height=5, width=6)
 
-## Weighted Unifrac 
+## Weighted Unifrac
 
 weighted_uni_ordi <- ordinate(fishmidgut, "PCoA", "unifrac", weighted=T)
 
 weighted_uni <- plot_ordination(fishmidgut, weighted_uni_ordi, color="substrata_collection") +
-  ggtitle("Weighted UniFrac") + geom_point(size = 2) +
+  ggtitle("Weighted UniFrac") + geom_point(size = 2) + theme_classic() +
   scale_color_brewer("Substrata", palette = "Set2")
 print(weighted_uni)
 
 ggsave(filename = "weighted unifrac midgut.png"
        , weighted_uni
-       , height=4, width=5)
+       , height=5, width=6)
 
-## Unweighted Unifrac 
+## Unweighted Unifrac
 
 unweighted_uni_ordi <- ordinate(fishmidgut, "PCoA", "unifrac", weighted=F)
 
 unweighted_uni <- plot_ordination(fishmidgut, unweighted_uni_ordi, color="substrata_collection") +
-  ggtitle("Unweighted UniFrac") + geom_point(size = 2) +
+  ggtitle("Unweighted UniFrac") + geom_point(size = 2) + theme_classic() + 
   scale_color_brewer("Substrata", palette = "Set2")
 print(unweighted_uni)
 
 ggsave(filename = "unweighted unifrac midgut.png"
        , unweighted_uni
-       , height=4, width=5)
+       , height=5, width=6)
 
-## Shannon Diversity
-
+## Shannon diversity
 
 shannon <- plot_richness(fishmidgut, measures = c("Shannon")) 
 
 shannon_plot <- plot_richness(fishmidgut, x = "substrata_collection", measures = c("Shannon")) +
-  xlab("Substrata") +
+  xlab("Substrata") + theme_classic() +
   geom_boxplot()
 shannon_plot
 
 ggsave(filename = "shannon midgut.png"
-       , weighted_uni
-       , height=4, width=5)
+       , shannon_plot
+       , height=5, width=6)
 
-## Chao Diversity
+## Chao diversity
 
 chao <- plot_richness(fishmidgut, measures = c("Chao1")) 
 
 chao_plot <- plot_richness(fishmidgut, x = "substrata_collection", measures = c("Chao1")) +
-  xlab("Substrata") +
+  xlab("Substrata") + theme_classic() +
   geom_boxplot()
 chao_plot
 
 ggsave(filename = "chao midgut.png"
-       , weighted_uni
-       , height=4, width=5)
+       , chao_plot
+       , height=5, width=6)
 
 dm_chao <- vegdist(t(otu_table(fishmidgut)), method="chao")
 chao_stats <- adonis2(dm_chao ~ substrata_collection, data=meta_chosen_subs)
@@ -208,3 +200,12 @@ rr_sb_phylo <- phyloseq(OTU, SAMP4, TAX, phylotree)
 rr_sb_dm <- vegdist(t(otu_table(rr_sb_phylo)), method="chao")
 chao_stats_rr_sb <- adonis2(rr_sb_dm ~ substrata_collection, data=rr_sb_meta)
 chao_stats_rr_sb
+
+# post hoc testing due to significant Pr (>F) value: not implimented, cannot use phyloseq object
+#install.packages('devtools')
+#library(devtools)
+#install_github("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis") 
+#library(pairwiseAdonis)
+#pair.mod <- pairwise.adonis2(fishmidgut ~ "substrata_collection", data= OTU_table)
+#pair.mod
+
