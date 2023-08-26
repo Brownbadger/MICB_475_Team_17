@@ -106,56 +106,36 @@ chao_stats
 
 # rocky reef & kelp forest chao
 
-rr_kf <- c("rocky reef", "kelp forest")
-rr_kf_meta <- filter(meta_chosen_subs, substrata_collection %in% rr_kf) 
-
-samp_df2 <- as.data.frame(rr_kf_meta)
-rownames(samp_df2)<- rr_kf_meta$"#SampleID"
-SAMP2 <- sample_data(samp_df2)
-class(SAMP2)
-
-rr_kf_phylo <- phyloseq(OTU, SAMP2, TAX, phylotree)
+rr_kf_phylo <- fishmidgut %>% 
+  subset_samples(substrata_collection != "sandy bottom")
 
 rr_kf_dm <- vegdist(t(otu_table(rr_kf_phylo)), method="chao")
 set.seed(0)
-chao_stats_rr_kf <- adonis2(rr_kf_dm ~ substrata_collection, data=rr_kf_meta)
+chao_stats_rr_kf <- adonis2(rr_kf_dm ~ substrata_collection, data=filter(meta_chosen_subs, substrata_collection != "sandy bottom"))
 chao_stats_rr_kf
 
 # sandy bottom & kelp forest chao
 
-sb_kf <- c("sandy bottom", "kelp forest")
-sb_kf_meta <- filter(meta_chosen_subs, substrata_collection %in% sb_kf) 
-
-samp_df3 <- as.data.frame(sb_kf_meta)
-rownames(samp_df3)<- sb_kf_meta$"#SampleID"
-SAMP3 <- sample_data(samp_df3)
-class(SAMP3)
-
-sb_kf_phylo <- phyloseq(OTU, SAMP3, TAX, phylotree)
+sb_kf_phylo <- fishmidgut %>% 
+  subset_samples(substrata_collection != "rocky reef")
 
 sb_kf_dm <- vegdist(t(otu_table(sb_kf_phylo)), method="chao")
 set.seed(0)
-chao_stats_sb_kf <- adonis2(sb_kf_dm ~ substrata_collection, data=sb_kf_meta)
+chao_stats_sb_kf <- adonis2(sb_kf_dm ~ substrata_collection, data=filter(meta_chosen_subs, substrata_collection != "rocky reef"))
 chao_stats_sb_kf
 
 # rocky reef & sandy bottom chao
 
-rr_sb <- c("rocky reef", "sandy bottom")
-rr_sb_meta <- filter(meta_chosen_subs, substrata_collection %in% rr_sb) 
+rr_sb_phylo <- fishmidgut %>% 
+  subset_samples(substrata_collection != "kelp forest")
 
-samp_df4 <- as.data.frame(rr_sb_meta)
-rownames(samp_df4)<- rr_sb_meta$"#SampleID"
-SAMP4 <- sample_data(samp_df4)
-class(SAMP4)
-
-rr_sb_phylo <- phyloseq(OTU, SAMP4, TAX, phylotree)
 
 rr_sb_dm <- vegdist(t(otu_table(rr_sb_phylo)), method="chao")
 set.seed(0)
-chao_stats_rr_sb <- adonis2(rr_sb_dm ~ substrata_collection, data=rr_sb_meta)
+chao_stats_rr_sb <- adonis2(rr_sb_dm ~ substrata_collection, data=filter(meta_chosen_subs, substrata_collection != "kelp forest"))
 chao_stats_rr_sb
 
-# post hoc testing due to significant Pr (>F) value: not implimented, cannot use phyloseq object
+# post hoc testing due to significant Pr (>F) value: not implemented, cannot use phyloseq object
 #install.packages('devtools')
 #library(devtools)
 #install_github("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis") 
