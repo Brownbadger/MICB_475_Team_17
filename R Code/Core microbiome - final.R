@@ -7,54 +7,21 @@ library(microbiome)
 library(ggVennDiagram)
 
 #### Load data ####
-load("rare_fish.RData")
-
-fish_rare <- fish_rare %>%
-  subset_samples(sample_type=="midgut")
+load("fish_midgut.RData")
 
 # Filter dataset by substrata
-substrata_sandy_bottom <- subset_samples(fish_rare, substrata_collection=="sandy bottom")
-substrata_sandy_mud_bottom <- subset_samples(fish_rare, substrata_collection=="sandy mud bottom")
-substrata_rocky_reef <- subset_samples(fish_rare, substrata_collection=="rocky reef")
-substrata_kelp_forrest <- subset_samples(fish_rare, substrata_collection=="kelp forrest")
-
-# What ASVs are found in more than 50% of samples in each vegetation category?
-sandy_bottom_ASVs <- core_members(substrata_sandy_mud_bottom, detection=0.001, prevalence = 0.5)
-rocky_reef_ASVs <- core_members(substrata_rocky_reef, detection=0.001, prevalence = 0.5)
-kelp_forrest_ASVs <- core_members(substrata_kelp_forrest, detection=0.001, prevalence = 0.5)
-
-# What are these ASVs?
-prune_taxa(sandy_mud_bottom_ASVs,fish_rare) %>%
-  tax_table()
-
-prune_taxa(sandy_mud_bottom_ASVs,fish_rare) %>%
-  plot_bar(, fill="Genus")+
-  facet_wrap(.~substrata_collection, scales="free")
-
-prune_taxa(kelp_forrest_ASVs,fish_rare) %>%
-  tax_table()
-
-prune_taxa(kelp_forrest_ASVs,fish_rare) %>%
-  plot_bar(, fill="Genus")+
-  facet_wrap(.~substrata_collection, scales="free")
-
-#subset by midgut 
-fish_rare <- fish_rare %>%
-  subset_samples(sample_type=="midgut")
-
-# Filter dataset by substrata
-substrata_sandy_bottom <- subset_samples(fish_rare, substrata_collection=="sandy bottom")
-substrata_rocky_reef <- subset_samples(fish_rare, substrata_collection=="rocky reef")
-substrata_kelp_forrest <- subset_samples(fish_rare, substrata_collection=="kelp forrest")
+substrata_sandy_bottom <- subset_samples(fishmidgut, substrata_collection=="sandy bottom")
+substrata_rocky_reef <- subset_samples(fishmidgut, substrata_collection=="rocky reef")
+substrata_kelp_forest <- subset_samples(fishmidgut, substrata_collection=="kelp forest")
 
 #### Venn diagram of all the ASVs in three substrata: rocky reef, sandy bottom and kelp forest  ####
 sandy_bottom_list <- core_members(substrata_sandy_bottom, detection=0.001, prevalence = 0.5)
 rocky_reef_list <- core_members(substrata_rocky_reef, detection=0.001, prevalence = 0.5)
-kelp_forest_list <- core_members(substrata_kelp_forrest, detection=0.001, prevalence = 0.5)
+kelp_forest_list <- core_members(substrata_kelp_forest, detection=0.001, prevalence = 0.5)
 
 list(SandyBottom = sandy_bottom_list, RockyReef = rocky_reef_list, KelpForest=kelp_forest_list)
 
-taxonomy <- as.data.frame(tax_table(fish_rare))
+taxonomy <- as.data.frame(tax_table(fishmidgut))
 
 sandy_bottom_core <- taxonomy %>% 
   rownames_to_column("ASVs") %>%
