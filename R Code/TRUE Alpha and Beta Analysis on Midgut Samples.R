@@ -135,6 +135,12 @@ set.seed(0)
 chao_stats_rr_sb <- adonis2(rr_sb_dm ~ substrata_collection, data=filter(meta_chosen_subs, substrata_collection != "kelp forest"))
 chao_stats_rr_sb
 
+#### PERMANOVA testing for midgut samples across substrata ####
+samp_dat_tdiv <- data.frame(sample_data(fishmidgut), estimate_richness(fishmidgut))
+dm_unifrac <- UniFrac(fishmidgut, weighted=TRUE) # Weighted UniFrac
+set.seed(0)
+adonis2(dm_unifrac ~ substrata_collection, data=samp_dat_tdiv)
+
 # post hoc testing due to significant Pr (>F) value: not implemented, cannot use phyloseq object
 #install.packages('devtools')
 #library(devtools)
